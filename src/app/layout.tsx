@@ -2,6 +2,7 @@ import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { SidebarProvider } from '@/components/ui/sidebar';
+import { AppChatWidget } from '@/components/app-chat/app-chat-widget';
 
 export const metadata: Metadata = {
   title: 'AetherChat',
@@ -24,6 +25,7 @@ export default function RootLayout({
         <SidebarProvider>
           {children}
         </SidebarProvider>
+        <AppChatWidget />
         <Toaster />
       </body>
     </html>
