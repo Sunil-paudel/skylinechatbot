@@ -10,6 +10,7 @@ import type { Message } from '@/lib/types';
 import { getAppKnowledgeResponse } from '@/app/actions';
 import { ScrollArea } from '../ui/scroll-area';
 import { ChatMessage } from '@/components/chat/chat-message';
+import { ChatInput } from '@/components/chat/chat-input';
 
 export function AppChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
@@ -87,13 +88,13 @@ export function AppChatWidget() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            transition={{ duration: 0.2 }}
-            className="fixed bottom-24 right-6 z-50"
+            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            transition={{ duration: 0.2, ease: "circOut" }}
+            className="fixed bottom-24 right-6 z-50 w-full max-w-sm"
           >
-            <Card className="w-80 h-[28rem] flex flex-col shadow-xl">
+            <Card className="h-[32rem] flex flex-col shadow-xl">
               <CardHeader className="border-b">
                 <CardTitle className="text-base">App Assistant</CardTitle>
               </CardHeader>
@@ -106,34 +107,11 @@ export function AppChatWidget() {
                             ))}
                         </div>
                     </ScrollArea>
-                    <div className='p-2 border-t'>
-                        <form onSubmit={async (e) => {
-                            e.preventDefault();
-                            const form = e.target as HTMLFormElement;
-                            const input = form.querySelector('textarea[name="message"]') as HTMLTextAreaElement;
-                            await handleSendMessage(input.value);
-                            input.value = '';
-                        }} className="flex w-full items-start gap-2">
-                            <textarea
-                                name="message"
-                                placeholder="Ask about the app..."
-                                className="resize-none text-sm min-h-[38px] max-h-24 w-full rounded-md border border-input bg-transparent px-3 py-2 ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                rows={1}
-                                onKeyDown={(e) => {
-                                if (e.key === 'Enter' && !e.shiftKey) {
-                                    e.preventDefault();
-                                    const form = e.target as HTMLTextAreaElement;
-                                    handleSendMessage(form.value);
-                                    form.value = '';
-                                }
-                                }}
-                                disabled={isLoading}
-                            />
-                            <Button type="submit" size="icon" className="w-9 h-9 shrink-0" disabled={isLoading}>
-                                <SendHorizontal className="w-4 h-4" />
-                            </Button>
-                        </form>
-                    </div>
+                    <ChatInput 
+                        onSendMessage={handleSendMessage}
+                        isLoading={isLoading}
+                        placeholder="Ask about the app..."
+                    />
                 </div>
               </CardContent>
             </Card>

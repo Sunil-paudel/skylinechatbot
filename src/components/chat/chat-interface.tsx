@@ -2,22 +2,11 @@
 'use client';
 
 import * as React from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { SendHorizontal } from 'lucide-react';
-
 import type { Message } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ChatMessage } from '@/components/chat/chat-message';
-import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
-import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
-
-const formSchema = z.object({
-  message: z.string().min(1, 'Message cannot be empty.'),
-});
+import { ChatInput } from './chat-input';
 
 interface ChatInterfaceProps {
   messages: Message[];
@@ -33,44 +22,16 @@ export function ChatInterface({
   placeholder = "Ask anything..."
 }: ChatInterfaceProps) {
   const bottomRef = React.useRef<HTMLDivElement>(null);
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      message: '',
-    },
-  });
-  const textareaRef = React.useRef<HTMLTextAreaElement>(null);
 
   React.useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
-    onSendMessage(data.message);
-    form.reset();
-    if (textareaRef.current) {
-        textareaRef.current.style.height = 'auto';
-    }
-  };
-
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault();
-      form.handleSubmit(onSubmit)();
-    }
-  };
-
-  const handleInput = (event: React.FormEvent<HTMLTextAreaElement>) => {
-    const textarea = event.currentTarget;
-    textarea.style.height = 'auto';
-    textarea.style.height = `${textarea.scrollHeight}px`;
-  };
-
   return (
     <div className="flex flex-col h-full">
       {/* Chat History */}
-      <ScrollArea className="flex-1 overflow-hidden">
-        <div className={cn("p-4 md:p-6 space-y-6 pb-24", messages.length === 0 && "flex flex-col h-full")}>
+      <ScrollArea className="flex-1">
+        <div className={cn("p-4 md:p-6 space-y-6", messages.length === 0 && "flex flex-col h-full")}>
           {messages.length > 0 ? (
             messages.map((message, index) => (
               <ChatMessage key={index} message={message} />
@@ -89,36 +50,11 @@ export function ChatInterface({
       </ScrollArea>
 
       {/* Chat Input */}
-      <div className="p-4 bg-card border-t relative">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="flex items-start gap-3">
-            <FormField
-              control={form.control}
-              name="message"
-              render={({ field }) => (
-                <FormItem className="flex-1">
-                  <FormControl>
-                    <Textarea
-                      placeholder={placeholder}
-                      className="resize-none min-h-[44px] max-h-48 pr-20"
-                      rows={1}
-                      {...field}
-                      ref={textareaRef}
-                      onKeyDown={handleKeyDown}
-                      onInput={handleInput}
-                      disabled={isLoading}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <Button type="submit" size="icon" disabled={isLoading || !form.formState.isValid} className="h-11 w-11 shrink-0">
-              <SendHorizontal className="w-5 h-5" />
-              <span className="sr-only">Send Message</span>
-            </Button>
-          </form>
-        </Form>
-      </div>
+      <ChatInput 
+        onSendMessage={onSendMessage}
+        isLoading={isLoading}
+        placeholder={placeholder}
+      />
     </div>
   );
 }

@@ -47,79 +47,55 @@ export default function Home() {
   const handleSendMessage = async (text: string) => {
     if (isLoading || !text.trim()) return;
 
-    let userMessage: Message = { role: 'user', content: text };
+    const userMessage: Message = { role: 'user', content: text };
     setIsLoading(true);
 
     let targetConversationId = currentConversationId;
-    let isNewChat = false;
+
+    const currentConv = conversations.find(c => c.id === targetConversationId);
+    const isNewConversation = !currentConv || currentConv.messages.length === 0;
 
     // If there is no current conversation, create one.
-    if (!targetConversationId) {
-      const newId = `conv-${Date.now()}`;
-      const newConversation: Conversation = {
-        id: newId,
-        title: text.substring(0, 30) + (text.length > 30 ? '...' : ''),
-        messages: [userMessage],
-      };
-      setConversations(prev => [newConversation, ...prev]);
-      setCurrentConversationId(newId);
-      targetConversationId = newId;
-      isNewChat = true;
-    } else {
-       // Find current conversation
-      const currentConversation = conversations.find(c => c.id === currentConversationId);
-      
-      const isNewConversation = currentConversation ? currentConversation.messages.length === 0 : true;
+    if (!targetConversationId || (currentConv && isNewConversation)) {
+        const newId = `conv-${Date.now()}`;
+        const newConversation: Conversation = {
+          id: newId,
+          title: text.substring(0, 30) + (text.length > 30 ? '...' : ''),
+          messages: [userMessage],
+        };
+        // If it's a truly new chat, add it. Otherwise, update the "New Chat" one.
+        if (!targetConversationId || (currentConv && currentConv.title === 'New Chat')) {
+           setConversations(prev => [newConversation, ...prev.filter(c => c.id !== targetConversationId)]);
+        } else {
+            setConversations(prev => [newConversation, ...prev]);
+        }
+        setCurrentConversationId(newId);
+        targetConversationId = newId;
 
+    } else {
       setConversations(prev =>
-        prev.map(c => {
-          if (c.id === targetConversationId) {
-            const updatedConversation = {
-              ...c,
-              title: isNewConversation ? text.substring(0, 30) + (text.length > 30 ? '...' : '') : c.title,
-              messages: [...c.messages, userMessage],
-            };
-            return updatedConversation;
-          }
-          return c;
-        })
+        prev.map(c => 
+          c.id === targetConversationId
+            ? { ...c, messages: [...c.messages, userMessage] }
+            : c
+        )
       );
     }
 
     const loadingMessage: Message = { role: 'assistant', content: '...' };
     setConversations(prev =>
       prev.map(c =>
-        c.id === targetConversationId ? { ...c, messages: [...(c.messages || []), userMessage, loadingMessage] } : c
+        c.id === targetConversationId ? { ...c, messages: [...c.messages, loadingMessage] } : c
       )
     );
-     // If it was a new chat, the user message is already added.
-    if (!isNewChat) {
-      setConversations(prev =>
-        prev.map(c => {
-          if (c.id === targetConversationId) {
-             const messages = [...c.messages];
-             // In case user message was not added yet.
-             if (messages.find(m=> m.role === 'user' && m.content === text) === undefined) {
-                messages.push(userMessage)
-             }
-             messages.push(loadingMessage);
-             return {...c, messages};
-          }
-          return c;
-        })
-      );
-    } else {
-        userMessage = { role: 'user', content: '' }; // clear user message as it's already there
-    }
-
 
     try {
-      const history = conversations.find(c => c.id === targetConversationId)?.messages ?? [];
-      const conversationHistory = [...history, userMessage].map(msg => ({ role: msg.role, content: msg.content }));
+      const history = conversations.find(c => c.id === targetConversationId)?.messages.slice(0, -1) ?? [];
+      const conversationHistory = history.map(msg => ({ role: msg.role, content: msg.content }));
 
       const aiResponse = await getAIResponse({
         latestMessage: text,
-        conversationHistory: conversationHistory,
+        conversationHistory,
       });
 
       const aiMessage: Message = { role: 'assistant', content: aiResponse.response };
@@ -166,17 +142,15 @@ export default function Home() {
                 onNewChat={handleNewChat}
             />
         </Sidebar>
-        <SidebarInset>
-            <div className="flex flex-col h-full pb-20 md:pb-0">
-                <ChatHeader onNewChat={handleNewChat} />
-                <ChatInterface
-                    messages={activeConversation?.messages || []}
-                    onSendMessage={handleSendMessage}
-                    isLoading={isLoading}
-                    placeholder="Ask AetherChat anything..."
-                />
-            </div>
-        </SidebarInset>
+        <div className="flex flex-col h-full flex-1">
+            <ChatHeader onNewChat={handleNewChat} />
+            <ChatInterface
+                messages={activeConversation?.messages || []}
+                onSendMessage={handleSendMessage}
+                isLoading={isLoading}
+                placeholder="Ask AetherChat anything..."
+            />
+        </div>
     </div>
   );
 }
