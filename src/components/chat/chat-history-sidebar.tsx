@@ -110,6 +110,7 @@ export function ChatHistorySidebar({
                         onBlur={handleSaveRename}
                         onKeyDown={handleKeyDown}
                         className="h-8 flex-1"
+                        aria-label="Rename conversation"
                       />
                     ) : (
                       <>
@@ -121,13 +122,11 @@ export function ChatHistorySidebar({
                           <span className="truncate flex-1">{conversation.title}</span>
                         </button>
                         <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center">
-                          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleStartEditing(conversation.id, conversation.title)}>
+                          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleStartEditing(conversation.id, conversation.title)} aria-label="Rename conversation">
                             <Pencil className="w-4 h-4"/>
-                            <span className="sr-only">Rename</span>
                           </Button>
-                          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => onDeleteConversation(conversation.id)}>
+                          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => onDeleteConversation(conversation.id)} aria-label="Delete conversation">
                             <Trash2 className="w-4 h-4"/>
-                            <span className="sr-only">Delete</span>
                           </Button>
                         </div>
                       </>
@@ -140,4 +139,3 @@ export function ChatHistorySidebar({
     </Sidebar>
   );
 }
-

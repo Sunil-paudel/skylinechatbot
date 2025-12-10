@@ -60,7 +60,12 @@ export function AppChatWidget() {
   return (
     <>
       <div className="fixed bottom-24 right-6 z-50">
-        <Button onClick={toggleOpen} size="icon" className="w-14 h-14 rounded-full shadow-lg">
+        <Button 
+          onClick={toggleOpen} 
+          size="icon" 
+          className="w-14 h-14 rounded-full shadow-lg"
+          aria-label={isOpen ? "Close App Assistant" : "Open App Assistant"}
+        >
           <AnimatePresence>
             {isOpen ? (
               <motion.div
