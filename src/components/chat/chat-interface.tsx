@@ -70,13 +70,13 @@ export function ChatInterface({
     <div className="flex flex-col h-full">
       {/* Chat History */}
       <ScrollArea className="flex-1 overflow-hidden">
-        <div className={cn("p-4 md:p-6 space-y-6 pb-24", messages.length === 0 && "h-full")}>
+        <div className={cn("p-4 md:p-6 space-y-6 pb-24", messages.length === 0 && "flex flex-col h-full")}>
           {messages.length > 0 ? (
             messages.map((message, index) => (
               <ChatMessage key={index} message={message} />
             ))
           ) : (
-             <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground">
+             <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground m-auto">
                 <div className="p-8 border-2 border-dashed rounded-full bg-card">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mx-auto h-12 w-12 text-primary"><path d="M12 22a6 6 0 0 0 6-6V9a6 6 0 0 0-12 0v7a6 6 0 0 0 6 6Z"/><path d="M12 18a2 2 0 0 0-2-2v-2a4 4 0 0 1 8 0v2a2 2 0 0 0-2 2Z"/><path d="M12 6V4"/><path d="M6 8V6"/><path d="M18 8V6"/></svg>
                 </div>
@@ -89,7 +89,7 @@ export function ChatInterface({
       </ScrollArea>
 
       {/* Chat Input */}
-      <div className="p-4 bg-card border-t">
+      <div className="p-4 bg-card border-t relative">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex items-start gap-3">
             <FormField
@@ -100,7 +100,7 @@ export function ChatInterface({
                   <FormControl>
                     <Textarea
                       placeholder={placeholder}
-                      className="resize-none min-h-[44px] max-h-48"
+                      className="resize-none min-h-[44px] max-h-48 pr-20"
                       rows={1}
                       {...field}
                       ref={textareaRef}
