@@ -252,7 +252,7 @@ export default function Home() {
           onRenameConversation={handleRenameConversation}
           onDeleteConversation={handleDeleteConversation}
         />
-        <div className="flex flex-1 flex-col min-w-0">
+        <main className="flex flex-1 flex-col min-w-0">
           <ChatHeader onNewChat={handleNewChat} />
           <ChatInterface
               messages={activeConversation?.messages || []}
@@ -260,7 +260,7 @@ export default function Home() {
               isLoading={isLoading}
               placeholder="Ask Skyline Chat anything..."
           />
-        </div>
+        </main>
       </div>
       <AlertDialog open={deleteDialog.isOpen} onOpenChange={(isOpen) => setDeleteDialog({ isOpen, convId: deleteDialog.convId })}>
           <AlertDialogContent>
