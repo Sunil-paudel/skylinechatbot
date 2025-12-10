@@ -14,7 +14,7 @@ export function ChatHeader({ onNewChat }: ChatHeaderProps) {
     <header className="flex items-center justify-between p-4 border-b shrink-0 h-16 w-full">
         <div className="flex items-center gap-2">
             <SidebarTrigger className="md:hidden" />
-            <h1 className="text-xl font-bold font-headline">AetherChat</h1>
+            <h1 className="text-xl font-bold font-headline">Skyline Chat</h1>
         </div>
       <Button onClick={onNewChat} variant="ghost" size="icon" aria-label="New Chat">
         <SquarePen className="w-5 h-5" />

@@ -41,7 +41,7 @@ export function ChatInterface({
                 <div className="p-8 border-2 border-dashed rounded-full bg-card">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mx-auto h-12 w-12 text-primary"><path d="M12 22a6 6 0 0 0 6-6V9a6 6 0 0 0-12 0v7a6 6 0 0 0 6 6Z"/><path d="M12 18a2 2 0 0 0-2-2v-2a4 4 0 0 1 8 0v2a2 2 0 0 0-2 2Z"/><path d="M12 6V4"/><path d="M6 8V6"/><path d="M18 8V6"/></svg>
                 </div>
-                <h2 className="mt-6 text-2xl font-bold font-headline text-foreground">Welcome to AetherChat</h2>
+                <h2 className="mt-6 text-2xl font-bold font-headline text-foreground">Welcome to Skyline Chat</h2>
                 <p className="mt-2 max-w-md">Start a conversation by typing a message below. The AI assistant is ready to help you.</p>
              </div>
           )}

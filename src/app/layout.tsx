@@ -5,8 +5,8 @@ import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppChatWidget } from '@/components/app-chat/app-chat-widget';
 
 export const metadata: Metadata = {
-  title: 'AetherChat',
-  description: 'A conversational AI chatbot app, similar to ChatGPT, for interacting with an AI assistant.',
+  title: 'Skyline Higher Secondary School',
+  description: 'A conversational AI chatbot for Skyline Higher Secondary School.',
 };
 
 export default function RootLayout({
@@ -23,7 +23,9 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased">
         <SidebarProvider>
-          {children}
+          <div className="flex flex-1">
+            {children}
+          </div>
         </SidebarProvider>
         <AppChatWidget />
         <Toaster />
