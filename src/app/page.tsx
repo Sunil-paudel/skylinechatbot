@@ -159,7 +159,7 @@ export default function Home() {
   const activeConversation = conversations.find(c => c.id === currentConversationId);
 
   return (
-    <div className="flex h-screen bg-background text-foreground">
+    <div style={{ display: 'flex', height: '100vh', backgroundColor: 'hsl(var(--background))', color: 'hsl(var(--foreground))'}}>
         <Sidebar>
             <ChatHistorySidebar 
                 conversations={conversations}
@@ -168,7 +168,7 @@ export default function Home() {
                 onNewChat={handleNewChat}
             />
         </Sidebar>
-        <div className="flex flex-col flex-1 h-full min-w-0">
+        <div>
             <ChatHeader onNewChat={handleNewChat} />
             <ChatInterface
                 messages={activeConversation?.messages || []}
