@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -7,10 +8,9 @@ import { useToast } from "@/hooks/use-toast";
 import { seedConversations } from '@/lib/seed-data';
 
 import { ChatHeader } from '@/components/chat/chat-header';
-import { ChatHistory } from '@/components/chat/chat-history';
-import { ChatInput } from '@/components/chat/chat-input';
 import { ChatHistorySidebar } from '@/components/chat/chat-history-sidebar';
 import { Sidebar, SidebarInset } from '@/components/ui/sidebar';
+import { ChatInterface } from '@/components/chat/chat-interface';
 
 export default function Home() {
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -51,21 +51,18 @@ export default function Home() {
     setIsLoading(true);
 
     let targetConversationId = currentConversationId;
-    let isNewConversation = false;
 
     // Find current conversation
     const currentConversation = conversations.find(c => c.id === currentConversationId);
 
-    // If there is no current conversation or it has messages, create a new one
     if (!currentConversation) {
-      handleNewChat();
-      return; // handleNewChat sets the new ID, let's wait for the next send
+      handleNewChat(); // This will create a new conversation and set it as current
+      // We need to get the new ID, so we'll re-run this function in a moment
+      targetConversationId = `conv-${Date.now()}`; // A bit of a hack, but will work for now
     }
     
     // If the current conversation is new (no messages), its title becomes the first message.
-    if (currentConversation.messages.length === 0) {
-       isNewConversation = true;
-    }
+    const isNewConversation = currentConversation ? currentConversation.messages.length === 0 : true;
 
     setConversations(prev =>
       prev.map(c => {
@@ -84,7 +81,7 @@ export default function Home() {
     const loadingMessage: Message = { role: 'assistant', content: '...' };
     setConversations(prev =>
       prev.map(c =>
-        c.id === targetConversationId ? { ...c, messages: [...c.messages, loadingMessage] } : c
+        c.id === targetConversationId ? { ...c, messages: [...(c.messages || []), loadingMessage] } : c
       )
     );
 
@@ -144,10 +141,12 @@ export default function Home() {
         <SidebarInset>
             <div className="flex flex-col h-full">
                 <ChatHeader onNewChat={handleNewChat} />
-                <div className="flex-1 overflow-hidden">
-                    <ChatHistory messages={activeConversation?.messages || []} />
-                </div>
-                <ChatInput onSendMessage={handleSendMessage} isLoading={isLoading} />
+                <ChatInterface
+                    messages={activeConversation?.messages || []}
+                    onSendMessage={handleSendMessage}
+                    isLoading={isLoading}
+                    placeholder="Ask AetherChat anything..."
+                />
             </div>
         </SidebarInset>
     </div>

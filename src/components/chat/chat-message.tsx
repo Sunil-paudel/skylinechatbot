@@ -1,3 +1,4 @@
+
 import { Bot, User } from 'lucide-react';
 import type { Message } from '@/lib/types';
 import { cn } from '@/lib/utils';
@@ -19,7 +20,7 @@ export function ChatMessage({ message }: { message: Message }) {
       )}
       <div
         className={cn(
-          'px-3.5 py-2.5 rounded-lg max-w-[85%] break-words',
+          'px-3.5 py-2.5 rounded-lg max-w-[85%] break-words shadow-sm',
           isUser
             ? 'bg-primary text-primary-foreground rounded-br-none'
             : 'bg-card text-card-foreground border rounded-bl-none'
