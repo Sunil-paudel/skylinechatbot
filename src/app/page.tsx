@@ -68,42 +68,52 @@ export default function Home() {
     if (isLoading || !text.trim()) return;
 
     const userMessage: Message = { role: 'user', content: text };
-    setIsLoading(true);
-
+    
+    let currentMessages: Message[] = [];
     let targetConversationId = currentConversationId;
 
     const currentConv = conversations.find(c => c.id === targetConversationId);
     const isNewConversation = !currentConv || currentConv.messages.length === 0;
 
-    // If there is no current conversation, create one.
-    if (!targetConversationId || (currentConv && isNewConversation && currentConv.title === 'New Chat')) {
+    if (isNewConversation) {
         const newId = `conv-${Date.now()}`;
         const newConversation: Conversation = {
-          id: newId,
-          title: text.substring(0, 30) + (text.length > 30 ? '...' : ''),
-          messages: [userMessage],
+            id: newId,
+            title: text.substring(0, 30) + (text.length > 30 ? '...' : ''),
+            messages: [userMessage],
         };
-        
-        setConversations(prev => [newConversation, ...prev.filter(c => c.id !== targetConversationId)]);
+        setConversations(prev => {
+            const otherConversations = prev.filter(c => c.id !== targetConversationId);
+            return [newConversation, ...otherConversations];
+        });
         setCurrentConversationId(newId);
         targetConversationId = newId;
-
+        currentMessages = [userMessage];
     } else {
-      setConversations(prev =>
-        prev.map(c => 
-          c.id === targetConversationId
-            ? { ...c, messages: [...c.messages, userMessage] }
-            : c
-        )
-      );
+        setConversations(prev =>
+            prev.map(c => {
+                if (c.id === targetConversationId) {
+                    const updatedMessages = [...c.messages, userMessage];
+                    currentMessages = updatedMessages;
+                    return { ...c, messages: updatedMessages };
+                }
+                return c;
+            })
+        );
     }
 
+    setIsLoading(true);
     const loadingMessage: Message = { role: 'assistant', content: '...' };
+
     setConversations(prev =>
-      prev.map(c =>
-        c.id === targetConversationId ? { ...c, messages: [...(c.messages || []), loadingMessage] } : c
-      )
+      prev.map(c => {
+        if (c.id === targetConversationId) {
+          return { ...c, messages: [...currentMessages, loadingMessage] };
+        }
+        return c;
+      })
     );
+
 
     try {
       const history = conversations.find(c => c.id === targetConversationId)?.messages.slice(0, -1) ?? [];
@@ -119,10 +129,8 @@ export default function Home() {
       setConversations(prev =>
         prev.map(c => {
           if (c.id === targetConversationId) {
-            // Replace loading message with AI response
-            const newMessages = c.messages.filter(m => m.content !== '...');
-            newMessages.push(aiMessage);
-            return { ...c, messages: newMessages };
+            const finalMessages = [...currentMessages, aiMessage];
+            return { ...c, messages: finalMessages };
           }
           return c;
         })
@@ -135,11 +143,13 @@ export default function Home() {
         title: "Error",
         description: "Failed to get response from AI. Please try again.",
       });
-      // Remove loading message on error
       setConversations(prev =>
-        prev.map(c =>
-          c.id === targetConversationId ? { ...c, messages: c.messages.filter(m => m.content !== '...') } : c
-        )
+        prev.map(c => {
+          if (c.id === targetConversationId) {
+            return { ...c, messages: currentMessages };
+          }
+          return c;
+        })
       );
     } finally {
       setIsLoading(false);
@@ -158,7 +168,7 @@ export default function Home() {
                 onNewChat={handleNewChat}
             />
         </Sidebar>
-        <div className="flex flex-col h-full flex-1">
+        <div className="flex flex-col flex-1 h-full min-w-0">
             <ChatHeader onNewChat={handleNewChat} />
             <ChatInterface
                 messages={activeConversation?.messages || []}
