@@ -29,16 +29,16 @@ const prompt = ai.definePrompt({
   name: 'receiveIntelligentAIResponsePrompt',
   input: {schema: ReceiveIntelligentAIResponseInputSchema},
   output: {schema: ReceiveIntelligentAIResponseOutputSchema},
-  prompt: `You are a helpful AI assistant. Respond concisely to the user based on the latest message and the conversation history.
+  prompt: `You are a helpful and concise AI assistant. Answer the user's request based on the conversation history and the latest message.
 
 Conversation History:
 {{#each conversationHistory}}
-  {{this.role}}: {{this.content}}
+- {{this.role}}: {{this.content}}
 {{/each}}
 
-User Message: {{{latestMessage}}}
+User: {{{latestMessage}}}
 
-Response:`,
+Assistant:`,
 });
 
 const receiveIntelligentAIResponseFlow = ai.defineFlow(

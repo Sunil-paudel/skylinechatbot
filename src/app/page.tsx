@@ -9,7 +9,7 @@ import { seedConversations } from '@/lib/seed-data';
 
 import { ChatHeader } from '@/components/chat/chat-header';
 import { ChatHistorySidebar } from '@/components/chat/chat-history-sidebar';
-import { Sidebar, SidebarInset } from '@/components/ui/sidebar';
+import { Sidebar } from '@/components/ui/sidebar';
 import { ChatInterface } from '@/components/chat/chat-interface';
 
 export default function Home() {
@@ -19,15 +19,35 @@ export default function Home() {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Load seed data on initial render
-    setConversations(seedConversations);
-    if (seedConversations.length > 0) {
-      setCurrentConversationId(seedConversations[0].id);
+    const savedConversations = localStorage.getItem('conversations');
+    if (savedConversations) {
+      setConversations(JSON.parse(savedConversations));
     } else {
-      // Create a new empty chat if there's no seed data
-      handleNewChat();
+      setConversations(seedConversations);
     }
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem('conversations', JSON.stringify(conversations));
+  }, [conversations]);
+
+  useEffect(() => {
+    const savedCurrentConversationId = localStorage.getItem('currentConversationId');
+    if (savedCurrentConversationId && savedCurrentConversationId !== 'null') {
+      setCurrentConversationId(savedCurrentConversationId);
+    } else if (conversations.length > 0) {
+      setCurrentConversationId(conversations[0].id);
+    } else {
+      handleNewChat();
+    }
+  }, [conversations.length]);
+
+  useEffect(() => {
+    if (currentConversationId) {
+      localStorage.setItem('currentConversationId', currentConversationId);
+    }
+  }, [currentConversationId]);
+
 
   const handleNewChat = () => {
     const newId = `conv-${Date.now()}`;
@@ -56,19 +76,15 @@ export default function Home() {
     const isNewConversation = !currentConv || currentConv.messages.length === 0;
 
     // If there is no current conversation, create one.
-    if (!targetConversationId || (currentConv && isNewConversation)) {
+    if (!targetConversationId || (currentConv && isNewConversation && currentConv.title === 'New Chat')) {
         const newId = `conv-${Date.now()}`;
         const newConversation: Conversation = {
           id: newId,
           title: text.substring(0, 30) + (text.length > 30 ? '...' : ''),
           messages: [userMessage],
         };
-        // If it's a truly new chat, add it. Otherwise, update the "New Chat" one.
-        if (!targetConversationId || (currentConv && currentConv.title === 'New Chat')) {
-           setConversations(prev => [newConversation, ...prev.filter(c => c.id !== targetConversationId)]);
-        } else {
-            setConversations(prev => [newConversation, ...prev]);
-        }
+        
+        setConversations(prev => [newConversation, ...prev.filter(c => c.id !== targetConversationId)]);
         setCurrentConversationId(newId);
         targetConversationId = newId;
 
@@ -85,7 +101,7 @@ export default function Home() {
     const loadingMessage: Message = { role: 'assistant', content: '...' };
     setConversations(prev =>
       prev.map(c =>
-        c.id === targetConversationId ? { ...c, messages: [...c.messages, loadingMessage] } : c
+        c.id === targetConversationId ? { ...c, messages: [...(c.messages || []), loadingMessage] } : c
       )
     );
 
