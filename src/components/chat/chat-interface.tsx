@@ -28,7 +28,7 @@ export function ChatInterface({
   }, [messages]);
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col flex-1 h-[calc(100vh-4rem)]">
       {/* Chat History */}
       <ScrollArea className="flex-1">
         <div className={cn("p-4 md:p-6 space-y-6", messages.length === 0 && "flex flex-col h-full")}>
