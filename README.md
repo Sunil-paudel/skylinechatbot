@@ -57,3 +57,4 @@ Genkit can automatically switch to a fallback model if the primary one fails. To
     });
     ```
     In this example, the app will first try to use `gemini-2.5-pro`. If that fails for any reason (e.g., the model is unavailable), it will automatically try `gemini-2.5-flash` instead.
+# skylinechatbot
