@@ -9,7 +9,6 @@ import { seedConversations } from '@/lib/seed-data';
 
 import { ChatHeader } from '@/components/chat/chat-header';
 import { ChatHistorySidebar } from '@/components/chat/chat-history-sidebar';
-import { Sidebar } from '@/components/ui/sidebar';
 import { ChatInterface } from '@/components/chat/chat-interface';
 
 export default function Home() {
@@ -40,7 +39,7 @@ export default function Home() {
     } else {
       handleNewChat();
     }
-  }, [conversations.length]);
+  }, [conversations.length > 0]);
 
   useEffect(() => {
     if (currentConversationId) {
@@ -159,24 +158,22 @@ export default function Home() {
   const activeConversation = conversations.find(c => c.id === currentConversationId);
 
   return (
-    <div style={{ display: 'flex', height: '100vh', backgroundColor: 'hsl(var(--background))', color: 'hsl(var(--foreground))'}}>
-        <Sidebar>
-            <ChatHistorySidebar 
-                conversations={conversations}
-                activeConversationId={currentConversationId}
-                onSelectConversation={handleSelectConversation}
-                onNewChat={handleNewChat}
-            />
-        </Sidebar>
-        <div>
-            <ChatHeader onNewChat={handleNewChat} />
-            <ChatInterface
-                messages={activeConversation?.messages || []}
-                onSendMessage={handleSendMessage}
-                isLoading={isLoading}
-                placeholder="Ask AetherChat anything..."
-            />
-        </div>
+    <div className="flex h-screen w-screen bg-background text-foreground">
+      <ChatHistorySidebar
+        conversations={conversations}
+        activeConversationId={currentConversationId}
+        onSelectConversation={handleSelectConversation}
+        onNewChat={handleNewChat}
+      />
+      <div className="flex flex-1 flex-col min-w-0">
+        <ChatHeader onNewChat={handleNewChat} />
+        <ChatInterface
+            messages={activeConversation?.messages || []}
+            onSendMessage={handleSendMessage}
+            isLoading={isLoading}
+            placeholder="Ask AetherChat anything..."
+        />
+      </div>
     </div>
   );
 }

@@ -11,7 +11,7 @@ type ChatHeaderProps = {
 
 export function ChatHeader({ onNewChat }: ChatHeaderProps) {
   return (
-    <header className="flex items-center justify-between p-4 border-b shrink-0 h-16">
+    <header className="flex items-center justify-between p-4 border-b shrink-0 h-16 w-full">
         <div className="flex items-center gap-2">
             <SidebarTrigger className="md:hidden" />
             <h1 className="text-xl font-bold font-headline">AetherChat</h1>

@@ -5,6 +5,7 @@ import { PlusCircle, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
+  Sidebar,
   SidebarContent,
   SidebarHeader,
   SidebarGroup,
@@ -29,7 +30,7 @@ export function ChatHistorySidebar({
   onNewChat,
 }: ChatHistorySidebarProps) {
   return (
-    <>
+    <Sidebar>
       <SidebarHeader>
         <SidebarGroup>
             <SidebarGroupLabel>Conversations</SidebarGroupLabel>
@@ -65,6 +66,6 @@ export function ChatHistorySidebar({
             </div>
         </ScrollArea>
       </SidebarContent>
-    </>
+    </Sidebar>
   );
 }
