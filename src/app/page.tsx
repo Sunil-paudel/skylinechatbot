@@ -2,13 +2,13 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import type { Message, Conversation } from '@/lib/types';
 import { getAIResponse } from '@/app/actions';
 import { useToast } from "@/hooks/use-toast";
 import { seedConversations } from '@/lib/seed-data';
 
 import { ChatHeader } from '@/components/chat/chat-header';
-import { ChatHistorySidebar } from '@/components/chat/chat-history-sidebar';
 import { ChatInterface } from '@/components/chat/chat-interface';
 import {
   AlertDialog,
@@ -20,6 +20,29 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import { Skeleton } from '@/components/ui/skeleton';
+
+const ChatHistorySidebar = dynamic(() => import('@/components/chat/chat-history-sidebar').then(mod => mod.ChatHistorySidebar), {
+  loading: () => (
+      <div className="w-full max-w-xs flex-col gap-4 p-2 hidden md:flex">
+          <div className="flex justify-between items-center p-2">
+              <Skeleton className="h-6 w-24" />
+              <Skeleton className="h-8 w-8" />
+          </div>
+          <div className="space-y-2 p-2">
+              <Skeleton className="h-8 w-full" />
+              <Skeleton className="h-8 w-full" />
+              <Skeleton className="h-8 w-full" />
+          </div>
+      </div>
+  ),
+  ssr: false
+});
+
+const AppChatWidget = dynamic(() => import('@/components/app-chat/app-chat-widget').then(mod => mod.AppChatWidget), {
+  ssr: false,
+});
+
 
 export default function Home() {
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -253,6 +276,7 @@ export default function Home() {
               </AlertDialogFooter>
           </AlertDialogContent>
       </AlertDialog>
+      <AppChatWidget />
     </>
   );
 }

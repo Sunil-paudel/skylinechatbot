@@ -3,7 +3,6 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { SidebarProvider } from '@/components/ui/sidebar';
-import { AppChatWidget } from '@/components/app-chat/app-chat-widget';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
@@ -49,7 +48,6 @@ export default function RootLayout({
             {children}
           </div>
         </SidebarProvider>
-        <AppChatWidget />
         <Toaster />
       </body>
     </html>
